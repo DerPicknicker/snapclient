@@ -29,6 +29,7 @@
 
 #include "audio_hal.h"
 #include "esp_err.h"
+#include "esp_log.h"
 
 #ifdef __cplusplus
 extern "C"

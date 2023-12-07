@@ -46,12 +46,13 @@ static i2c_bus_handle_t i2c_handler;
 /*
  * i2c default configuration
  */
-static i2c_config_t i2c_cfg = {
+/*static i2c_config_t i2c_cfg = {
     .mode = I2C_MODE_MASTER,
     .sda_pullup_en = GPIO_PULLUP_ENABLE,
     .scl_pullup_en = GPIO_PULLUP_ENABLE,
     .master.clk_speed = 100000,
 };
+*/
 
 /*
  * Operate fuction of PA
@@ -83,7 +84,7 @@ esp_err_t tas5805m_read_byte(uint8_t register_name, uint8_t *data)
     
     if (ret != ESP_OK)
     {
-        log_e("I2C ERROR");
+        ESP_LOGW(TAG, "I2C ERROR");
     }
 
     vTaskDelay(1 / portTICK_RATE_MS);
