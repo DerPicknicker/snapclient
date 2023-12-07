@@ -1,0 +1,27 @@
+{
+    "files.associations": {
+        "pcm51xx_reg_cfg.h": "c",
+        "adau1962_reg_addr.h": "c",
+        "__bit_reference": "c",
+        "__node_handle": "c",
+        "atomic": "c",
+        "bitset": "c",
+        "chrono": "c",
+        "cstddef": "c",
+        "deque": "c",
+        "__memory": "c",
+        "limits": "c",
+        "locale": "c",
+        "optional": "c",
+        "random": "c",
+        "ratio": "c",
+        "system_error": "c",
+        "tuple": "c",
+        "type_traits": "c",
+        "vector": "c",
+        "array": "c",
+        "functional": "c",
+        "utility": "c",
+        "variant": "c"
+    }
+}

@@ -5,8 +5,8 @@
  * Configuration of mute/unmute gpio in init (connected to XSMT)
  */
 
-#include "adau1961.h"
-#include "adau1962_reg_addr.h"
+#include "tas5805m.h"
+#include "tas5805m_reg_addr.h"
 
 #include <driver/gpio.h>
 #include <math.h>
@@ -20,7 +20,7 @@ typedef struct adau1961_cfg_reg_s {
   uint8_t value;
 } adau1961_cfg_reg_t;
 
-static const char *TAG = "ADAU1961";
+static const char *TAG = "tas5805m";
 
 #define ADAU1961_ASSERT(a, format, b, ...) \
   if ((a) != 0) {                          \
@@ -441,8 +441,49 @@ esp_err_t adau1961_init(audio_hal_codec_config_t *codec_cfg) {
 }
 
 esp_err_t adau1961_get_volume(int *vol) {
-  
+  esp_err_t ret = ESP_OK;
+  uint8_t data[3];
+  int8_t volIndB;
 
+  // get current register setting of left channel
+  data[0] = (uint8_t)(R29_PLAYBACK_HP_LEFT_VOL_CTRL >> 8);
+  data[1] = (uint8_t)R29_PLAYBACK_HP_LEFT_VOL_CTRL;
+  ret =
+      i2c_bus_read_bytes(i2c_handler, adau1961_addr, &data[0], 2, &data[2], 1);
+  ADAU1961_ASSERT(ret, "Fail to read R29_PLAYBACK_HP_LEFT_VOL_CTRL", ESP_FAIL);
+
+  //  volIndB = ((data[2] >> 2) & 0x3F) - 57;
+  //*vol = pow(10, ((float)volIndB / 20.0)) * 50.0;
+
+  volIndB = ((data[2] >> 2) & 0x3F);
+  *vol = (int)volIndB * 100 / 63;
+
+  // we assume all channel are set to the same volume.
+  // this is a save assumption, as we are setting them in
+  // adau1961_set_volume()
+
+  /*
+  // get current register setting of right channel
+  data[0] = (uint8_t)(R30_PLAYBACK_HP_RIGHT_VOL_CTRL >> 8);
+  data[1] = (uint8_t)R30_PLAYBACK_HP_RIGHT_VOL_CTRL;
+  ret = i2c_bus_read_bytes(i2c_handler, adau1961_addr, &data[0], 2, &data[2],
+  1); ADAU1961_ASSERT(ret, "Fail to read R30_PLAYBACK_HP_RIGHT_VOL_CTRL",
+  ESP_FAIL);
+
+  // get current register setting of line left channel
+  data[0] = (uint8_t)(R31_PLAYBACK_LINE_OUT_LEFT_VOL_CTRL >> 8);
+  data[1] = (uint8_t)R31_PLAYBACK_LINE_OUT_LEFT_VOL_CTRL;
+  ret = i2c_bus_read_bytes(i2c_handler, adau1961_addr, &data[0], 2, &data[2],
+  1); ADAU1961_ASSERT(ret, "Fail to read R31_PLAYBACK_LINE_OUT_LEFT_VOL_CTRL",
+  ESP_FAIL);
+
+  // get current register setting of line right channel
+  data[0] = (uint8_t)(R32_PLAYBACK_LINE_OUT_RIGHT_VOL_CTRL >> 8);
+  data[1] = (uint8_t)R32_PLAYBACK_LINE_OUT_RIGHT_VOL_CTRL;
+  ret = i2c_bus_read_bytes(i2c_handler, adau1961_addr, &data[0], 2, &data[2],
+  1); ADAU1961_ASSERT(ret, "Fail to read R32_PLAYBACK_LINE_OUT_RIGHT_VOL_CTRL",
+  ESP_FAIL);
+  */
 
   return ret;
 }
