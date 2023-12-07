@@ -35,6 +35,7 @@ static const char *TAG = "TAS5805M";
 #define TAS5805M_ADDR 0x5c
 // #define TAS5805M_RST_GPIO get_pa_enable_gpio ()
 #define TAS5805M_VOLUME_MAX 254
+#define TAS5805M_MUTE 255
 #define TAS5805M_VOLUME_MIN 0
 
 esp_err_t tas5805m_ctrl(audio_hal_codec_mode_t mode,
@@ -69,34 +70,33 @@ audio_hal_func_t AUDIO_CODEC_TAS5805M_DEFAULT_HANDLE = {
     .handle = NULL,
 };
 
-
 esp_err_t tas5805m_read_byte(uint8_t register_name, uint8_t *data)
 {
-    
-    int ret;
-    i2c_cmd_handle_t cmd = i2c_cmd_link_create();
-    i2c_master_start(cmd);
-    i2c_master_write_byte(cmd, TAS5805M_ADDRESS << 1 | WRITE_BIT, ACK_CHECK_EN);
-    i2c_master_write_byte(cmd, register_name, ACK_CHECK_EN);
-    i2c_master_stop(cmd);
-    ret = i2c_master_cmd_begin(I2C_TAS5805M_MASTER_NUM, cmd, 1000 / portTICK_RATE_MS);
-    i2c_cmd_link_delete(cmd);
-    
-    if (ret != ESP_OK)
-    {
-        ESP_LOGW(TAG, "I2C ERROR");
-    }
 
-    vTaskDelay(1 / portTICK_RATE_MS);
-    cmd = i2c_cmd_link_create();
-    i2c_master_start(cmd);
-    i2c_master_write_byte(cmd, TAS5805M_ADDRESS << 1 | READ_BIT, ACK_CHECK_EN);
-    i2c_master_read_byte(cmd, data, NACK_VAL);
-    i2c_master_stop(cmd);
-    ret = i2c_master_cmd_begin(I2C_TAS5805M_MASTER_NUM, cmd, 1000 / portTICK_RATE_MS);
-    i2c_cmd_link_delete(cmd);
-    
-    return ret;
+  int ret;
+  i2c_cmd_handle_t cmd = i2c_cmd_link_create();
+  i2c_master_start(cmd);
+  i2c_master_write_byte(cmd, TAS5805M_ADDRESS << 1 | WRITE_BIT, ACK_CHECK_EN);
+  i2c_master_write_byte(cmd, register_name, ACK_CHECK_EN);
+  i2c_master_stop(cmd);
+  ret = i2c_master_cmd_begin(I2C_TAS5805M_MASTER_NUM, cmd, 1000 / portTICK_RATE_MS);
+  i2c_cmd_link_delete(cmd);
+
+  if (ret != ESP_OK)
+  {
+    ESP_LOGW(TAG, "I2C ERROR");
+  }
+
+  vTaskDelay(1 / portTICK_RATE_MS);
+  cmd = i2c_cmd_link_create();
+  i2c_master_start(cmd);
+  i2c_master_write_byte(cmd, TAS5805M_ADDRESS << 1 | READ_BIT, ACK_CHECK_EN);
+  i2c_master_read_byte(cmd, data, NACK_VAL);
+  i2c_master_stop(cmd);
+  ret = i2c_master_cmd_begin(I2C_TAS5805M_MASTER_NUM, cmd, 1000 / portTICK_RATE_MS);
+  i2c_cmd_link_delete(cmd);
+
+  return ret;
 }
 
 esp_err_t tas5805m_write_byte(uint8_t register_name, uint8_t value)
@@ -117,7 +117,8 @@ esp_err_t tas5805m_write_byte(uint8_t register_name, uint8_t value)
 esp_err_t
 tas5805m_init(audio_hal_codec_config_t *codec_cfg)
 {
-  int test =1;
+  // TODO
+  int test = 1;
   return test;
 }
 
@@ -128,23 +129,30 @@ tas5805m_set_volume(int vol)
   return tas5805m_write_byte(TAS5805M_DIG_VOL_CTRL_REGISTER, volume);
 }
 
+/*
 esp_err_t
-tas5805m_get_volume(int *value)
+tas5805m_get_volume(int8_t *volume)
 {
-  int test =1;
-  return test;
+
+  uint8_t value = 0;
+  int ret = tas5805m_read_byte(TAS5805M_DIG_VOL_CTRL_REGISTER, &value);
+  *volume = value;
+  return ret;
 }
+*/
 
 esp_err_t
 tas5805m_set_mute(bool enable)
 {
-  int test =1;
-  return test;
+  if(enable == true){
+    tas5805m_set_volume(TAS5805M_MUTE); // Set Volume to 255 for Mute
+  }
+  return ESP_OK;
 }
 
 esp_err_t
 tas5805m_get_mute(int *value)
 {
-  int test =1;
+  int test = 1;
   return test;
 }

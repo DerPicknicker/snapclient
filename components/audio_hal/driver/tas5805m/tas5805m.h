@@ -77,7 +77,7 @@ extern "C"
    *     - ESP_OK
    *     - ESP_FAIL
    */
-  esp_err_t tas5805m_get_volume (int *value);
+  esp_err_t tas5805m_get_volume (int *volume);
 
   /**
    * @brief Set TAS5805 mute or not
