@@ -34,20 +34,23 @@ menu "Custom Audio Board"
     	config DAC_I2C_SDA
         	int "SDA pin"
         	default 12 if DAC_ADAU1961
-        	default 21 if DAC_MA120 || DAC_PCM51XX || DAC_MA120 || DAC_MA120X0 || DAC_MAX98357 || DAC_PCM5102A
-        	help
+        	default 21 if DAC_MA120 || DAC_PCM51XX || DAC_MA120 || DAC_MA120X0 || DAC_MAX98357 || DAC_PCM5102A || DAC_TAS5805M
+        	
+            help
         	    I2C SDA pin of the DAC control interface
     	config DAC_I2C_SCL
         	int "SCL pin"
         	default 14 if DAC_ADAU1961
-        	default 22 if DAC_MA120 || DAC_PCM51XX || DAC_MA120 || DAC_MA120X0 || DAC_MAX98357 || DAC_PCM5102A
-        	help
+        	default 22 if DAC_MA120 || DAC_PCM51XX || DAC_MA120 || DAC_MA120X0 || DAC_MAX98357 || DAC_PCM5102A  
+            default 27 if DAC_TAS5805M
+            help
         	    I2C SCL pin of the DAC control interface
     	config DAC_I2C_ADDR
         	hex "I2C address"
         	default 0x70 if DAC_ADAU1961
-        	default 0x20 if DAC_MA120 || DAC_PCM51XX || DAC_MA120 || DAC_MA120X0 || DAC_MAX98357 || DAC_PCM5102A
-        	help
+        	default 0x20 if DAC_MA120 || DAC_PCM51XX || DAC_MA120 || DAC_MA120X0 || DAC_MAX98357 || DAC_PCM5102A  
+        	default 0x2D if DAC_TAS5805M 
+            help
         	    I2C Address of the DAC control interface
     endmenu
 
@@ -61,20 +64,24 @@ menu "Custom Audio Board"
         config MASTER_I2S_BCK_PIN
             int "Master i2s bck"
             default 23 if DAC_MAX98357
+            default 26 if DAC_TAS5805M
             default 23
+            
             help
                 Master audio interface bit clock.
 
         config MASTER_I2S_LRCK_PIN
             int "Master i2s lrck"
             default 24 if DAC_MAX98357
-            default 13
+            default 25 if DAC_TAS5805M
+            default 2
             help
                 Master audio interface left/right sync clock.
 
         config MASTER_I2S_DATAOUT_PIN
             int "Master i2s data out"
             default 25 if DAC_MAX98357
+            default 22 if DAC_TAS5805M
             default 14
             help
                 Master audio interface data out.
