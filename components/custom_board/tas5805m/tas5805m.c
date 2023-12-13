@@ -38,13 +38,13 @@ static const char *TAG = "TAS5805M";
 #define TAS5805M_MUTE 255
 #define TAS5805M_VOLUME_MIN 0
 
-uint8_t* VolumeLevel = 0;
+static uint8_t VolumeLevel = 0;
 
 esp_err_t tas5805m_ctrl(audio_hal_codec_mode_t mode,
                         audio_hal_ctrl_t ctrl_state);
 esp_err_t tas5805m_conig_iface(audio_hal_codec_mode_t mode,
                                audio_hal_codec_i2s_iface_t *iface);
-//static i2c_bus_handle_t i2c_handler;
+// static i2c_bus_handle_t i2c_handler;
 
 /*
  * i2c default configuration
@@ -116,28 +116,65 @@ esp_err_t tas5805m_write_byte(uint8_t register_name, uint8_t value)
   return ret;
 }
 
-esp_err_t
-tas5805m_init(audio_hal_codec_config_t *codec_cfg)
+esp_err_t tas5805m_init(tas5805m_mode mode)
 {
-  // TODO
-  int test = 1;
-  return test;
+    int ret;
+
+    
+
+    /* set PDN to 1 */
+    gpio_set_level(TAS5805M_GPIO_PDN, 1);
+    vTaskDelay(100 / portTICK_RATE_MS);
+
+    log_i("Setting to HI Z");
+    ret = tas5805m_write_byte(TAS5805M_DEVICE_CTRL_2_REGISTER, 0x02);
+    vTaskDelay(100 / portTICK_RATE_MS);
+    if (ret != ESP_OK) return ret;
+
+    log_i("Setting to PLAY");
+    ret = tas5805m_write_byte(TAS5805M_DEVICE_CTRL_2_REGISTER, 0x03);
+    if (ret != ESP_OK) return ret;
+
+   /* if (mode == TAS5805M_MONO) {
+        // NEEDS to be verified if Bridged-Mode is meant here.  
+        //Need to find a solution how to trigger Mono-Mode via MenuConfig
+       
+        uint8_t value = 0;
+        int ret = _read_byte(TAS5805M_DEVICE_CTRL_1_REGISTER, &value);
+        if (ret != ESP_OK) return ret;
+
+        value |= 0b100;
+        log_i("Setting to MONO mode, CTRL_1 = %d", value);        
+        ret = _write_byte(TAS5805M_DEVICE_CTRL_1_REGISTER, value);
+        if (ret != ESP_OK) return ret;
+    } */ 
+
+    vTaskDelay(100 / portTICK_RATE_MS);
+    return ret;
 }
 
 esp_err_t
 tas5805m_set_volume(int vol)
 {
+
   uint8_t volume = vol;
-  return tas5805m_write_byte(TAS5805M_DIG_VOL_CTRL_REGISTER, volume);
+  if (volume > TAS5805M_VOLUME_MAX)
+  { // Check if Volume is not bigger than 254 if yes, set the Volume to 254
+    return tas5805m_write_byte(TAS5805M_DIG_VOL_CTRL_REGISTER, volume);
+  }
+  else
+  {
+    return tas5805m_write_byte(TAS5805M_DIG_VOL_CTRL_REGISTER, volume);
+  }
 }
 
 esp_err_t tas5805m_get_volume()
 {
-  int ret = tas5805m_read_byte(TAS5805M_DIG_VOL_CTRL_REGISTER, &VolumeLevel);
+  int ret = tas5805m_read_byte(TAS5805M_DIG_VOL_CTRL_REGISTER, VolumeLevel);
   if (ret != ESP_OK)
   {
     ESP_LOGW(TAG, "Cant get Volume.");
-    return ret; 
+    return ret;
   }
   return ret;
 }
@@ -145,8 +182,8 @@ esp_err_t tas5805m_get_volume()
 esp_err_t
 tas5805m_set_mute()
 {
-  
-  if (*VolumeLevel != TAS5805M_MUTE)
+
+  if (VolumeLevel != TAS5805M_MUTE)
   {
     int ret = tas5805m_set_volume(TAS5805M_MUTE); // Set Volume to 255 for Mute
     return ret;

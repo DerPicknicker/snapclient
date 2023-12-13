@@ -26,7 +26,7 @@ menu "Custom Audio Board"
             bool "Analog Devices MAX98357 DAC"
         
         config DAC_TAS5805M
-            bool "Analog Devices MAX98357 DAC"
+            bool "Texas Instruments TAS5805M"
 
     endchoice
 
