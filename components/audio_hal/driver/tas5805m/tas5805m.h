@@ -77,7 +77,7 @@ extern "C"
    *     - ESP_OK
    *     - ESP_FAIL
    */
-  esp_err_t tas5805m_get_volume (int *volume);
+  esp_err_t tas5805m_get_volume ();
 
   /**
    * @brief Set TAS5805 mute or not
@@ -90,10 +90,10 @@ extern "C"
    *     - ESP_FAIL Parameter error
    *     - ESP_OK   Success
    */
-  esp_err_t tas5805m_set_mute (bool enable);
+  esp_err_t tas5805m_set_mute ();
 
   /**
-   * @brief Mute gradually by (value)ms
+   * @brief Mute TAS5805M
    *
    * @param value  Time for mute with millisecond.
    * @return
@@ -101,7 +101,7 @@ extern "C"
    *     - ESP_OK   Success
    *
    */
-  esp_err_t tas5805m_set_mute_fade (int value);
+  
 
   /**
    * @brief Get TAS5805 mute status
@@ -110,18 +110,9 @@ extern "C"
    *     - ESP_FAIL Parameter error
    *     - ESP_OK   Success
    */
-  esp_err_t tas5805m_get_mute (int *value);
+  esp_err_t tas5805m_get_mute (bool *enabled);
 
-  /**
-   * @brief Set DAMP mode
-   *
-   * @param value  TAS5805M_DAMP_MODE_BTL or TAS5805M_DAMP_MODE_PBTL
-   * @return
-   *     - ESP_FAIL Parameter error
-   *     - ESP_OK   Success
-   *
-   */
-  esp_err_t tas5805m_set_damp_mode (int value);
+  
 
 #ifdef __cplusplus
 }

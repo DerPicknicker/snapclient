@@ -38,11 +38,13 @@ static const char *TAG = "TAS5805M";
 #define TAS5805M_MUTE 255
 #define TAS5805M_VOLUME_MIN 0
 
+uint8_t* VolumeLevel = 0;
+
 esp_err_t tas5805m_ctrl(audio_hal_codec_mode_t mode,
                         audio_hal_ctrl_t ctrl_state);
 esp_err_t tas5805m_conig_iface(audio_hal_codec_mode_t mode,
                                audio_hal_codec_i2s_iface_t *iface);
-static i2c_bus_handle_t i2c_handler;
+//static i2c_bus_handle_t i2c_handler;
 
 /*
  * i2c default configuration
@@ -129,30 +131,41 @@ tas5805m_set_volume(int vol)
   return tas5805m_write_byte(TAS5805M_DIG_VOL_CTRL_REGISTER, volume);
 }
 
-/*
-esp_err_t
-tas5805m_get_volume(int8_t *volume)
+esp_err_t tas5805m_get_volume()
 {
-
-  uint8_t value = 0;
-  int ret = tas5805m_read_byte(TAS5805M_DIG_VOL_CTRL_REGISTER, &value);
-  *volume = value;
+  int ret = tas5805m_read_byte(TAS5805M_DIG_VOL_CTRL_REGISTER, &VolumeLevel);
+  if (ret != ESP_OK)
+  {
+    ESP_LOGW(TAG, "Cant get Volume.");
+    return ret; 
+  }
   return ret;
 }
-*/
 
 esp_err_t
-tas5805m_set_mute(bool enable)
+tas5805m_set_mute()
 {
-  if(enable == true){
-    tas5805m_set_volume(TAS5805M_MUTE); // Set Volume to 255 for Mute
+  
+  if (*VolumeLevel != TAS5805M_MUTE)
+  {
+    int ret = tas5805m_set_volume(TAS5805M_MUTE); // Set Volume to 255 for Mute
+    return ret;
   }
-  return ESP_OK;
+  else
+  {
+    return ESP_OK;
+  }
 }
 
 esp_err_t
-tas5805m_get_mute(int *value)
+tas5805m_get_mute(bool *enabled)
 {
-  int test = 1;
-  return test;
+  if (tas5805m_get_volume() == TAS5805M_MUTE)
+  {
+    return true;
+  }
+  else
+  {
+    return false;
+  }
 }

@@ -27,7 +27,11 @@
 #ifndef _TAS5805M_REG_CFG_
 #define _TAS5805M_REG_CFG_
 
-/* Register Naming of */
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+/* Register Naming*/
 #define I2C_MASTER_NUM I2C_NUM_0   /*!< I2C port number for master dev */
 #define WRITE_BIT I2C_MASTER_WRITE /*!< I2C master write */
 #define READ_BIT I2C_MASTER_READ   /*!< I2C master read */
@@ -39,11 +43,13 @@
 #define I2C_TAS5805M_MASTER_NUM I2C_MASTER_NUM /*!< I2C port number for master dev */
 
 #define TAS5805M_ADDRESS 0x2D /*!< 7-bit address with a 15k pull up resistor */
+
 #ifdef PIN_DAC_PWDN
 #define TAS5805M_GPIO_PDN PIN_DAC_PWDN
 #else
 #define TAS5805M_GPIO_PDN GPIO_NUM_5 /*!< GPIO used for !PDN pin */
 #endif
+
 #define TAS5805M_GPIO_PDN_MASK ((1ULL << TAS5805M_GPIO_PDN))
 
 #define TAS5805M_RESET_CTRL_REGISTER 0x01
@@ -90,4 +96,4 @@
 #define TAS5805M_PIN_CONTROL2_REGISTER 0x75
 #define TAS5805M_MISC_CONTROL_REGISTER 0x76
 #define TAS5805M_FAULT_CLEAR_REGISTER 0x78
-#endif 
+#endif
