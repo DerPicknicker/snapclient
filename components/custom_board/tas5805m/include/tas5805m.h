@@ -112,7 +112,12 @@ extern "C"
    */
   esp_err_t tas5805m_get_mute (bool *enabled);
 
-  
+  esp_err_t tas5805m_ctrl(audio_hal_codec_mode_t mode,
+                        audio_hal_ctrl_t ctrl_state);
+
+                        
+  esp_err_t tas5805m_config_iface(audio_hal_codec_mode_t mode,
+                               audio_hal_codec_i2s_iface_t *iface);
 
 #ifdef __cplusplus
 }
