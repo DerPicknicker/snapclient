@@ -46,7 +46,7 @@ extern "C"
    *     - ESP_OK
    *     - ESP_FAIL
    */
-  esp_err_t tas5805m_init (audio_hal_codec_config_t *codec_cfg);
+  esp_err_t tas5805m_init ();
 
   /**
    * @brief Deinitialize TAS5805 codec chip
@@ -90,7 +90,7 @@ extern "C"
    *     - ESP_FAIL Parameter error
    *     - ESP_OK   Success
    */
-  esp_err_t tas5805m_set_mute ();
+  esp_err_t tas5805m_set_mute (bool enable);
 
   /**
    * @brief Mute TAS5805M
@@ -115,7 +115,7 @@ extern "C"
   esp_err_t tas5805m_ctrl(audio_hal_codec_mode_t mode,
                         audio_hal_ctrl_t ctrl_state);
 
-                        
+
   esp_err_t tas5805m_config_iface(audio_hal_codec_mode_t mode,
                                audio_hal_codec_i2s_iface_t *iface);
 

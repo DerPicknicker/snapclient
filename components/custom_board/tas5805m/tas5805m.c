@@ -114,38 +114,35 @@ esp_err_t tas5805m_write_byte(uint8_t register_name, uint8_t value)
   return ret;
 }
 
-esp_err_t tas5805m_init(tas5805m_mode mode)
+esp_err_t tas5805m_init()
 {
     int ret;
 
     
-
+  
     /* set PDN to 1 */
     gpio_set_level(TAS5805M_GPIO_PDN, 1);
     vTaskDelay(100 / portTICK_RATE_MS);
 
-    log_i("Setting to HI Z");
+   // LOGI(TAG,"Setting to HI Z");
     ret = tas5805m_write_byte(TAS5805M_DEVICE_CTRL_2_REGISTER, 0x02);
     vTaskDelay(100 / portTICK_RATE_MS);
     if (ret != ESP_OK) return ret;
 
-    log_i("Setting to PLAY");
+    //LOG_I(TAG,"Setting to PLAY");
     ret = tas5805m_write_byte(TAS5805M_DEVICE_CTRL_2_REGISTER, 0x03);
     if (ret != ESP_OK) return ret;
 
-   /* if (mode == TAS5805M_MONO) {
-        // NEEDS to be verified if Bridged-Mode is meant here.  
-        //Need to find a solution how to trigger Mono-Mode via MenuConfig
-       
-        uint8_t value = 0;
-        int ret = _read_byte(TAS5805M_DEVICE_CTRL_1_REGISTER, &value);
-        if (ret != ESP_OK) return ret;
-
-        value |= 0b100;
-        log_i("Setting to MONO mode, CTRL_1 = %d", value);        
-        ret = _write_byte(TAS5805M_DEVICE_CTRL_1_REGISTER, value);
-        if (ret != ESP_OK) return ret;
-    } */ 
+    // Check if Bridge-Mode is enabled 
+    #ifdef CONFIG_DAC_OPERATION_MODE
+     uint8_t value = 0;
+     ret = tas5805m_read_byte(TAS5805M_DEVICE_CTRL_1_REGISTER, &value);
+     if (ret != ESP_OK) return ret;
+     value= 0b100; 
+     //log_i("Setting to MONO mode, CTRL_1 = %d", value);        
+     ret = tas5805m_write_byte(TAS5805M_DEVICE_CTRL_1_REGISTER, value);
+     if (ret != ESP_OK) return ret;   
+    #endif
 
     vTaskDelay(100 / portTICK_RATE_MS);
     return ret;
@@ -178,7 +175,7 @@ esp_err_t tas5805m_get_volume()
 }
 
 esp_err_t
-tas5805m_set_mute()
+tas5805m_set_mute(bool enable)
 {
 
   if (VolumeLevel != TAS5805M_MUTE)

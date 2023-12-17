@@ -85,6 +85,11 @@ menu "Custom Audio Board"
             default 14
             help
                 Master audio interface data out.
+        config DAC_OPERATION_MODE
+            bool "Enable Bridge-Mode"
+            default false if DAC_TAS5805M
+            help
+                If enabled left channel will be played with more power.
     endmenu
 
 	menu "I2S slave interface"
