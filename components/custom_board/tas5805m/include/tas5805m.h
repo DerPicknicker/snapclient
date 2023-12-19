@@ -82,7 +82,7 @@ extern "C"
    *     - ESP_OK
    *     - ESP_FAIL
    */
-  esp_err_t tas5805m_get_volume ();
+  esp_err_t tas5805m_get_volume(int *vol);
 
   /**
    * @brief Set TAS5805 mute or not
@@ -115,7 +115,7 @@ extern "C"
    *     - ESP_FAIL Parameter error
    *     - ESP_OK   Success
    */
-  esp_err_t tas5805m_get_mute (bool *enabled);
+  esp_err_t tas5805m_get_mute (int *value);
 
   esp_err_t tas5805m_ctrl(audio_hal_codec_mode_t mode,
                         audio_hal_ctrl_t ctrl_state);
