@@ -196,7 +196,7 @@ tas5805m_set_volume(int vol)
   { // Check if Volume is not bigger than 254 if yes, set the Volume to 254
     return tas5805m_write_byte(TAS5805M_DIG_VOL_CTRL_REGISTER, TAS5805M_VOLUME_MIN);
   }
-  return tas5805m_write_byte(TAS5805M_DIG_VOL_CTRL_REGISTER, vol);
+  return tas5805m_write_byte(TAS5805M_DIG_VOL_CTRL_REGISTER, volTemp);
 }
 esp_err_t tas5805m_get_volume(int *vol)
 {
@@ -227,7 +227,6 @@ tas5805m_set_mute(bool enable)
   {
     return tas5805m_write_byte(TAS5805M_DIG_VOL_CTRL_REGISTER, TAS5805M_VOLUME_MUTE);
   }
-
   return ESP_OK;
 }
 
