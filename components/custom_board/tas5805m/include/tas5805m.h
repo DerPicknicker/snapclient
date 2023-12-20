@@ -42,6 +42,11 @@ extern "C"
 #define I2C_MASTER_RX_BUF_DISABLE   0                          /*!< I2C master doesn't need buffer */
 #define I2C_MASTER_TIMEOUT_MS       1000
 
+#define TAS5805M_VOLUME_MAX 0
+#define TAS5805M_VOLUME_MUTE 255
+#define TAS5805M_VOLUME_MIN 254
+
+
   /**
    * @brief Initialize TAS5805 codec chip
    *
@@ -115,7 +120,7 @@ extern "C"
    *     - ESP_FAIL Parameter error
    *     - ESP_OK   Success
    */
-  esp_err_t tas5805m_get_mute (int *value);
+  esp_err_t tas5805m_get_mute (bool *enabled);
 
   esp_err_t tas5805m_ctrl(audio_hal_codec_mode_t mode,
                         audio_hal_ctrl_t ctrl_state);
