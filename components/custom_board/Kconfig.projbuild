@@ -29,8 +29,8 @@ menu "Custom Audio Board"
             bool "Texas Instruments TAS5805M"
 
     endchoice
-
-	menu "DAC I2C control interface"
+    
+    menu "DAC I2C control interface"
     	config DAC_I2C_SDA
         	int "SDA pin"
         	default 12 if DAC_ADAU1961

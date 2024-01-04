@@ -2,3 +2,5 @@ build
 libopus
 .vscode/
 sdkconfig
+.DS_Store
+components/.DS_Store

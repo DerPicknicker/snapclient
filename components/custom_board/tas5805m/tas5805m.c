@@ -183,32 +183,40 @@ esp_err_t tas5805m_init()
 esp_err_t
 tas5805m_set_volume(int vol)
 {
+  int vol_idx = 0; // Temp-Variable 
+
+  /* Checking if Volume is bigger or smaller than the max values */
+  if (vol < TAS5805M_VOLUME_MIN)
+    {
+      vol = TAS5805M_VOLUME_MIN;
+    }
+  if (vol > TAS5805M_VOLUME_MAX)
+    {
+      vol = TAS5805M_VOLUME_MAX;
+    }
   /* Mapping the Values from 0-100 to 254-0 */
-
-  int volTemp = map(vol, 0, 100, TAS5805M_VOLUME_MIN, TAS5805M_VOLUME_MAX);
-
-  if (volTemp < TAS5805M_VOLUME_MAX) //
-  {                                  // Check if Volume is not smaller than 0 if yes, set the Volume to 0
-    return tas5805m_write_byte(TAS5805M_DIG_VOL_CTRL_REGISTER, TAS5805M_VOLUME_MAX);
-  }
-
-  if (volTemp > TAS5805M_VOLUME_MIN)
-  { // Check if Volume is not bigger than 254 if yes, set the Volume to 254
-    return tas5805m_write_byte(TAS5805M_DIG_VOL_CTRL_REGISTER, TAS5805M_VOLUME_MIN);
-  }
-  return tas5805m_write_byte(TAS5805M_DIG_VOL_CTRL_REGISTER, volTemp);
+  vol_idx = vol / 5; 
+  /* Updating the global volume Variable */
+  currentVolume = vol_idx;
+  /* Writing the Volume to the Register*/
+  return tas5805m_write_byte(TAS5805M_DIG_VOL_CTRL_REGISTER, tas5805m_volume[vol_idx]);
 }
 esp_err_t tas5805m_get_volume(int *vol)
 {
   esp_err_t ret = ESP_OK;
   uint8_t rxbuf = 0;
   ret = tas5805m_read_byte(TAS5805M_DIG_VOL_CTRL_REGISTER, &rxbuf);
-  if (ret != ESP_OK)
-  {
-    ESP_LOGW(TAG, "Cant get Volume.");
-  }
-  *vol = map(rxbuf, TAS5805M_VOLUME_MIN, TAS5805M_VOLUME_MAX, 0, 100);
-  return ESP_OK;
+  int i;
+  for (i = 0; i < sizeof (tas5805m_volume); i++)
+    {
+      if (rxbuf>= tas5805m_volume[i])
+        break;
+    }
+  /* Updating the global volume Variable */
+  currentVolume = i; 
+  ESP_LOGI (TAG, "Volume is %d", i * 5);
+  *vol = 5 * i; // Converting it to percent
+  return ret;
 }
 
 esp_err_t tas5805m_deinit(void)
@@ -217,15 +225,19 @@ esp_err_t tas5805m_deinit(void)
   return ESP_OK;
 }
 
-// Set the Volume to 255 to enable the MUTE
+
 
 esp_err_t
 tas5805m_set_mute(bool enable)
 {
-
+  
   if (enable == true)
   {
+    // Set the Volume to 255 to enable the MUTE
     return tas5805m_write_byte(TAS5805M_DIG_VOL_CTRL_REGISTER, TAS5805M_VOLUME_MUTE);
+  }
+  else{
+    return tas5805m_write_byte(TAS5805M_DIG_VOL_CTRL_REGISTER,tas5805m_volume[currentVolume]); // Restore Volume to its old value
   }
   return ESP_OK;
 }
