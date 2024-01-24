@@ -12,7 +12,7 @@ No need to install ESP-IDF or anything else. All commands should be run in proje
 ### Start an interactive IDF environnement
 In this interactive shell you can run menuconfig, build, flash and monitor command. 
 ```
-docker run --rm -it -v .:/project -w /project -v /dev:/dev --privileged espressif/idf:v4.3.5
+docker run --rm -it -v .:/project -w /project -v /dev:/dev --privileged espressif/idf:v5.1.1
 ```
 
 ### Configure
@@ -37,12 +37,12 @@ Exit docker interactive shell: `exit`
 If you want to execute a specific command or to generate a reusable .bin file. 
 ### menuconfig
 ```
-docker run --rm -it -v .:/project -w /project espressif/idf:v4.3.5 idf.py menuconfig
+docker run --rm -it -v .:/project -w /project -v /dev:/dev --privileged espressif/idf:v5.1.1 idf.py menuconfig
 ```
 
 ### Build
 ```
-docker run --rm -it -v .:/project -w /project espressif/idf:v4.3.5 idf.py build
+docker run --rm -it -v .:/project -w /project -v /dev:/dev --privileged espressif/idf:v5.1.1 idf.py build
 ```
 
 ### Flash
@@ -52,7 +52,7 @@ Mapping of serial port to container is not simple in windows but you can merge a
 
 #### Merge bins into single firmware bin file
 ```
-docker run --rm -it -v .:/project -w /project/build espressif/idf:v4.3.1    //runs terminal in idf container
+docker run --rm -it -v .:/project -w /project -v /dev:/dev --privileged espressif/idf:v5.1.1   //runs terminal in idf container
 
 esptool.py --chip esp32 merge_bin --output firmware.bin @flash_args         // merges all bin files into firmware.bin
 ```
