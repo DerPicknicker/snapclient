@@ -50,6 +50,21 @@ Mapping of serial port to container is not simple in windows but you can merge a
  - [ESP Tool web flasher](https://espressif.github.io/esptool-js/)
  - [ESP32 Flash Download tool](https://www.espressif.com/en/support/download/other-tools)
 
+On MacOS / Linux  you need to install a small python package, make sure that pip is installed on your machine: 
+
+```
+pip install esptool
+```
+After installation you can start the SerialServer with this command: 
+```
+esp_rfc2217_server.py -v -p 4000 dev/serialDevice
+```
+
+Create now a new terminal run the docker container and flash it using this command: 
+```
+idf.py --port 'rfc2217://host.docker.internal:4000?ign_set_control' flash monitor
+```
+
 #### Merge bins into single firmware bin file
 ```
 docker run --rm -it -v .:/project -w /project -v /dev:/dev --privileged espressif/idf:v5.1.1   //runs terminal in idf container
