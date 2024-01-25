@@ -235,9 +235,21 @@ static esp_err_t player_setup_i2s(i2s_port_t i2sNum,
               .din = pin_config0.data_in_num,
               .invert_flags =
                   {
+                      #if CONFI_FLIP_MCLK_LEVEL
+                      .mclk_inv = true,
+                      #else
                       .mclk_inv = false,
+                      #endif
+                      #if CONFIG_FLIP_BCLK_LEVEL
+                      .bclk_inv = true,
+                      #else
                       .bclk_inv = false,
+                      #endif
+                      #if CONFIG_FLIP_WORD_SELECT_LEVEL
+                      .ws_inv = true,
+                      #else
                       .ws_inv = false,
+                      #endif
                   },
           },
   };
@@ -1525,8 +1537,12 @@ static void player_task(void *pvParameters) {
 
         continue;
       }
-
+      
+      #if CONFIG_DISABLE_APLL_ADJUST
+      const bool enableControlLoop = false;
+      #else
       const bool enableControlLoop = true;
+      #endif
 
       const int64_t shortOffset = 2;              // µs, softsync
       const int64_t miniOffset = 1;               // µs, softsync
