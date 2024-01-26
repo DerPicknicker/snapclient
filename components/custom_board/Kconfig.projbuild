@@ -206,17 +206,17 @@ menu "Custom Audio Board"
     endmenu
 
     menu "Logic-Level-Settings"
-        config FLIP_MCLK_LEVEL
+        config INVERT_MCLK_LEVEL
             bool "Invert Logic Level MCLK"
             default false
             help
                 Invert the Logic-Level of MCLK. 
-        config FLIP_WORD_SELECT_LEVEL
+        config INVERT_WORD_SELECT_LEVEL
             bool "Invert Logic Level WordSelect"
             default false
             help
                 Some Dacs can bridge their outputs. Word-Select is used for selecting the played audio channel. This will switch L/R.
-        config FLIP_BCLK_LEVEL
+        config INVERT_BCLK_LEVEL
             bool "Invert Logic Level BCLK"
             default false
             help
