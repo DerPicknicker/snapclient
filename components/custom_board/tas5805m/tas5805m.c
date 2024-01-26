@@ -60,15 +60,20 @@ audio_hal_func_t AUDIO_CODEC_TAS5805M_DEFAULT_HANDLE = {
 void i2c_master_init()
 {
   int i2c_master_port = I2C_MASTER_NUM;
-
-  get_i2c_pins(I2C_NUM_0, &i2c_cfg);
-
-  esp_err_t res = i2c_param_config(i2c_master_port, &i2c_cfg);
-  printf("Driver param setup : %d\n", res);
-  res = i2c_driver_install(i2c_master_port, i2c_cfg.mode,
+  esp_err_t ret; 
+  //ret = get_i2c_pins(I2C_NUM_0, &i2c_cfg);
+  ESP_ERROR_CHECK(get_i2c_pins(I2C_NUM_0, &i2c_cfg));
+  //esp_err_t res = i2c_param_config(i2c_master_port, &i2c_cfg);
+  ESP_ERROR_CHECK(i2c_param_config(i2c_master_port, &i2c_cfg));
+  //ESP_LOGW(TAG, "Driver param setup : %d\n" , res);
+ 
+  //res = i2c_driver_install(i2c_master_port, i2c_cfg.mode,
+  //                          I2C_MASTER_RX_BUF_DISABLE, I2C_MASTER_TX_BUF_DISABLE,
+    //                       0);
+  ESP_ERROR_CHECK(i2c_driver_install(i2c_master_port, i2c_cfg.mode,
                            I2C_MASTER_RX_BUF_DISABLE, I2C_MASTER_TX_BUF_DISABLE,
-                           0);
-  printf("Driver installed   : %d\n", res);
+                           0));
+  //ESP_LOGW(TAG, "Driver installed   : %d\n", res);
 }
 
 /* Helper Functions */
@@ -113,14 +118,23 @@ esp_err_t tas5805m_read_byte(uint8_t register_name, uint8_t *data)
 
 esp_err_t tas5805m_write_byte(uint8_t register_name, uint8_t value)
 {
-  int ret;
+  int ret =0;
   i2c_cmd_handle_t cmd = i2c_cmd_link_create();
   i2c_master_start(cmd);
   i2c_master_write_byte(cmd, TAS5805M_ADDRESS << 1 | WRITE_BIT, ACK_CHECK_EN);
   i2c_master_write_byte(cmd, register_name, ACK_CHECK_EN);
   i2c_master_write_byte(cmd, value, ACK_CHECK_EN);
   i2c_master_stop(cmd);
+  //ret = i2c_master_cmd_begin(I2C_TAS5805M_MASTER_NUM, cmd, 1000 / portTICK_RATE_MS);
+  //ESP_ERROR_CHECK(i2c_master_cmd_begin(I2C_TAS5805M_MASTER_NUM, cmd, 1000 / portTICK_RATE_MS));
   ret = i2c_master_cmd_begin(I2C_TAS5805M_MASTER_NUM, cmd, 1000 / portTICK_RATE_MS);
+
+// Überprüfe den Rückgabewert und reagiere entsprechend
+  if (ret != ESP_OK) {
+    ESP_LOGE(TAG, "Fehler bei der I2C-Übertragung: %s", esp_err_to_name(ret));
+    // Füge hier ggf. weitere Fehlerbehandlungsmaßnahmen hinzu
+  }
+  
   i2c_cmd_link_delete(cmd);
 
   return ret;
@@ -130,7 +144,7 @@ esp_err_t tas5805m_write_byte(uint8_t register_name, uint8_t value)
 
 esp_err_t tas5805m_init()
 {
-  int ret;
+  int ret =0;
   // Init the I2C-Driver
   i2c_master_init();
   /* Register the PDN pin as output and write 1 to enable the TAS chip */
@@ -144,24 +158,32 @@ esp_err_t tas5805m_init()
   ESP_LOGW(TAG, "Power down pin: %d", TAS5805M_GPIO_PDN);
   gpio_config(&io_conf);
   gpio_set_level(TAS5805M_GPIO_PDN, 0);
-  vTaskDelay(200 / portTICK_RATE_MS);
+  vTaskDelay(100 / portTICK_RATE_MS);
   gpio_set_level(TAS5805M_GPIO_PDN, 1);
-  vTaskDelay(200 / portTICK_RATE_MS);
+  vTaskDelay(100 / portTICK_RATE_MS);
 
   /* TAS5805M.Begin()*/
 
   ESP_LOGW(TAG, "Setting to HI Z");
-  ret = tas5805m_write_byte(TAS5805M_DEVICE_CTRL_2_REGISTER, 0x02);
+  //ret = tas5805m_write_byte(TAS5805M_DEVICE_CTRL_2_REGISTER, 0x02);
+  ESP_ERROR_CHECK(tas5805m_write_byte(TAS5805M_DEVICE_CTRL_2_REGISTER, 0x02));
   vTaskDelay(100 / portTICK_RATE_MS);
-  if (ret != ESP_OK)
+  if (ret != ESP_OK){
+    ESP_LOGW(TAG, "TAS5805M_DEVICE_CTRL_2_REGISTER, 0x02 FAILED!!!");
     return ret;
+  }
+    
   ESP_LOGW(TAG, "Setting to PLAY");
+  
   ret = tas5805m_write_byte(TAS5805M_DEVICE_CTRL_2_REGISTER, 0x03);
-  if (ret != ESP_OK)
-    return ret;
+  if (ret != ESP_OK){
+    ESP_LOGW(TAG, "TAS5805M_DEVICE_CTRL_2_REGISTER, 0x03 FAILED!!");
+     return ret;
+  }
+     
 
     // Check if Bridge-Mode is enabled
-#ifdef CONFIG_DAC_BRIDGE_MODE
+  #ifdef CONFIG_DAC_BRIDGE_MODE
   uint8_t value = 0;
   ret = tas5805m_read_byte(TAS5805M_DEVICE_CTRL_1_REGISTER, &value);
   if (ret != ESP_OK)
@@ -171,9 +193,9 @@ esp_err_t tas5805m_init()
   ret = tas5805m_write_byte(TAS5805M_DEVICE_CTRL_1_REGISTER, value);
   if (ret != ESP_OK)
     return ret;
-#endif
+  #endif
 
-  vTaskDelay(100 / portTICK_RATE_MS);
+  //vTaskDelay(100 / portTICK_RATE_MS);
   return ret;
 }
 
