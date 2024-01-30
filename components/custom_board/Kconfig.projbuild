@@ -95,7 +95,7 @@ menu "Custom Audio Board"
             bool "Enable Bridge-Mode"
             default false if DAC_TAS5805M
             help
-                If enabled left channel will be played with more power. To use the right channel please change Word-Select-Setting in Player-Settings.
+                If enabled left channel will be played with more power. To use the right channel please change Word-Select-Setting in Logic-Level-Settings.
 	endmenu
 
     menu "I2S slave interface"
