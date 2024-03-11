@@ -61,19 +61,17 @@ void i2c_master_init()
 {
   int i2c_master_port = I2C_MASTER_NUM;
   esp_err_t ret; 
-  //ret = get_i2c_pins(I2C_NUM_0, &i2c_cfg);
+  
   ESP_ERROR_CHECK(get_i2c_pins(I2C_NUM_0, &i2c_cfg));
-  //esp_err_t res = i2c_param_config(i2c_master_port, &i2c_cfg);
-  ESP_ERROR_CHECK(i2c_param_config(i2c_master_port, &i2c_cfg));
-  //ESP_LOGW(TAG, "Driver param setup : %d\n" , res);
  
-  //res = i2c_driver_install(i2c_master_port, i2c_cfg.mode,
-  //                          I2C_MASTER_RX_BUF_DISABLE, I2C_MASTER_TX_BUF_DISABLE,
-    //                       0);
+  ESP_ERROR_CHECK(i2c_param_config(i2c_master_port, &i2c_cfg));
+  
+ 
+ 
   ESP_ERROR_CHECK(i2c_driver_install(i2c_master_port, i2c_cfg.mode,
                            I2C_MASTER_RX_BUF_DISABLE, I2C_MASTER_TX_BUF_DISABLE,
                            0));
-  //ESP_LOGW(TAG, "Driver installed   : %d\n", res);
+  
 }
 
 /* Helper Functions */
@@ -125,14 +123,13 @@ esp_err_t tas5805m_write_byte(uint8_t register_name, uint8_t value)
   i2c_master_write_byte(cmd, register_name, ACK_CHECK_EN);
   i2c_master_write_byte(cmd, value, ACK_CHECK_EN);
   i2c_master_stop(cmd);
-  //ret = i2c_master_cmd_begin(I2C_TAS5805M_MASTER_NUM, cmd, 1000 / portTICK_RATE_MS);
-  //ESP_ERROR_CHECK(i2c_master_cmd_begin(I2C_TAS5805M_MASTER_NUM, cmd, 1000 / portTICK_RATE_MS));
+  
   ret = i2c_master_cmd_begin(I2C_TAS5805M_MASTER_NUM, cmd, 1000 / portTICK_RATE_MS);
 
-// Überprüfe den Rückgabewert und reagiere entsprechend
+ // Check if ret is OK
   if (ret != ESP_OK) {
     ESP_LOGE(TAG, "Fehler bei der I2C-Übertragung: %s", esp_err_to_name(ret));
-    // Füge hier ggf. weitere Fehlerbehandlungsmaßnahmen hinzu
+    
   }
   
   i2c_cmd_link_delete(cmd);
@@ -158,16 +155,16 @@ esp_err_t tas5805m_init()
   ESP_LOGW(TAG, "Power down pin: %d", TAS5805M_GPIO_PDN);
   gpio_config(&io_conf);
   gpio_set_level(TAS5805M_GPIO_PDN, 0);
-  vTaskDelay(100 / portTICK_RATE_MS);
+  vTaskDelay(10 / portTICK_RATE_MS);
   gpio_set_level(TAS5805M_GPIO_PDN, 1);
-  vTaskDelay(100 / portTICK_RATE_MS);
+  vTaskDelay(10 / portTICK_RATE_MS);
 
   /* TAS5805M.Begin()*/
 
   ESP_LOGW(TAG, "Setting to HI Z");
-  //ret = tas5805m_write_byte(TAS5805M_DEVICE_CTRL_2_REGISTER, 0x02);
+
   ESP_ERROR_CHECK(tas5805m_write_byte(TAS5805M_DEVICE_CTRL_2_REGISTER, 0x02));
-  vTaskDelay(100 / portTICK_RATE_MS);
+  vTaskDelay(10 / portTICK_RATE_MS);
   if (ret != ESP_OK){
     ESP_LOGW(TAG, "TAS5805M_DEVICE_CTRL_2_REGISTER, 0x02 FAILED!!!");
     return ret;
@@ -189,13 +186,12 @@ esp_err_t tas5805m_init()
   if (ret != ESP_OK)
     return ret;
   value = 0b100;
-  // ESP_LOGW(TAG,"Setting to MONO mode, CTRL_1 = %d", value);
+  
   ret = tas5805m_write_byte(TAS5805M_DEVICE_CTRL_1_REGISTER, value);
   if (ret != ESP_OK)
     return ret;
   #endif
 
-  //vTaskDelay(100 / portTICK_RATE_MS);
   return ret;
 }
 
