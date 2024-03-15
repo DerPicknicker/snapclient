@@ -24,7 +24,16 @@ set(COMPONENT_SRCS
 )
 endif()
 
-#[[
+if (CONFIG_ESP_AI_THINKER_ES8388_BOARD)
+message(STATUS "Current board name is " CONFIG_ESP_AI_THINKER_ES8388_BOARD)
+list(APPEND COMPONENT_ADD_INCLUDEDIRS ./ai_thinker_es8388)
+set(COMPONENT_SRCS
+./ai_thinker_es8388/board.c
+./ai_thinker_es8388/board_pins_config.c
+)
+endif()
+
+
 if (CONFIG_ESP_LYRAT_MINI_V1_1_BOARD)
 message(STATUS "Current board name is " CONFIG_ESP_LYRAT_MINI_V1_1_BOARD)
 list(APPEND COMPONENT_ADD_INCLUDEDIRS ./lyrat_mini_v1_1)
@@ -34,7 +43,7 @@ set(COMPONENT_SRCS
 )
 endif()
 
-
+#[[
 if (CONFIG_ESP_LYRATD_MSC_V2_1_BOARD)
 message(STATUS "Current board name is " CONFIG_ESP_LYRATD_MSC_V2_1_BOARD)
 list(APPEND COMPONENT_ADD_INCLUDEDIRS ./lyratd_msc_v2_1)

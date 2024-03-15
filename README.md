@@ -133,10 +133,10 @@ idf.py menuconfig
 Configure to match your setup
   - <b>Audio HAL :</b> Choose your audio board
     - Lyrat (4.3, 4.2)
-    - Lyrat TD (2.2, 2.1)
+    - Lyrat TD (2.2, 2.1) --> not supported yet
     - Lyrat Mini (1.1)
-    - KORVO DU1906
-    - ESP32-S2 Kaluga (1.2)
+    - KORVO DU1906	--> not supported yet
+    - ESP32-S2 Kaluga (1.2)	--> not supported yet
     - Or a custom board
   - <b>Custom Audio Board :</b> Configure your DAC and GPIO
     - DAC Chip :
@@ -169,6 +169,13 @@ Configure to match your setup
 ```
 idf.py build flash monitor
 ```
+
+### Merge bin to flash at 0x0 with web.esphome.io
+
+```
+esptool.py --chip esp32  merge_bin -o merged.bin --flash_size 4MB --flash_freq 80m 0x1000 build/bootloader/bootloader.bin 0x8000 build/partition_table/partition-table.bin 0xd000 build/ota_data_initial.bin 0x10000 build/snapclient.bin 0x370000 build/storage.bin
+```
+
 ## Test
 Setup a snapcast server on your network
 
