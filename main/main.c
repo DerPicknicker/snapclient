@@ -2779,7 +2779,7 @@ void app_main(void) {
   gpio_config(&cfg);
 #endif
 
-/* #if CONFIG_AUDIO_BOARD_CUSTOM
+ #if CONFIG_AUDIO_BOARD_CUSTOM && CONFIG_DAC_ADAU1961
   // some codecs need i2s mclk for initialization
 
   i2s_chan_handle_t tx_chan;
@@ -2825,7 +2825,7 @@ void app_main(void) {
   ESP_ERROR_CHECK(i2s_channel_init_std_mode(tx_chan, &tx_std_cfg));
   i2s_channel_enable(tx_chan);
 #endif
-*/ 
+ 
   ESP_LOGI(TAG, "Start codec chip");
   board_handle = audio_board_init();
   if (board_handle) {
