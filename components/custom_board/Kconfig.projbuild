@@ -221,12 +221,7 @@ menu "Custom Audio Board"
             default false
             help
                 Invert the Logic-Level of BCLK. 
-        config DISABLE_APLL_ADJUST
-            bool "Disable APLL_ADJUST"
-            default false
-            help
-                Some DACs like the TAS5805M doesnt like the APLL_ADJUST logic. Because their missing an MCLK-Connection. If you have audio issues turn this on and see if your issues are resolved.
-
+        
     endmenu
 
 endmenu

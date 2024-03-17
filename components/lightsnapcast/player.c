@@ -1538,11 +1538,10 @@ static void player_task(void *pvParameters) {
         continue;
       }
       
-      #if CONFIG_DISABLE_APLL_ADJUST
-      const bool enableControlLoop = false;
-      #else
+      
+  
       const bool enableControlLoop = true;
-      #endif
+     
 
       const int64_t shortOffset = 2;              // µs, softsync
       const int64_t miniOffset = 1;               // µs, softsync

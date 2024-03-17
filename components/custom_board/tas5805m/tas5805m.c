@@ -60,7 +60,7 @@ audio_hal_func_t AUDIO_CODEC_TAS5805M_DEFAULT_HANDLE = {
 void i2c_master_init()
 {
   int i2c_master_port = I2C_MASTER_NUM;
-  esp_err_t ret; 
+  
   
   ESP_ERROR_CHECK(get_i2c_pins(I2C_NUM_0, &i2c_cfg));
  
@@ -76,11 +76,7 @@ void i2c_master_init()
 
 /* Helper Functions */
 
-// Mapping between Value Areas implementation from arduino.cc
-long map(long x, long in_min, long in_max, long out_min, long out_max)
-{
-  return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
-}
+
 // Reading of TAS5805M-Register
 
 esp_err_t tas5805m_read_byte(uint8_t register_name, uint8_t *data)
